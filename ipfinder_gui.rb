@@ -1,3 +1,4 @@
+#2022 Levi D. Smith - levidsmith.com
 require 'gtk3'
 require_relative 'ipfinder'
 
@@ -8,25 +9,40 @@ def makeWindow()
 
     grid = Gtk::Grid.new
 
+    #URL bar
     $entryUrlInput = Gtk::Entry.new
     grid.attach($entryUrlInput, 0, 0, 1, 1)
 
+    #Go button
     $buttonGo = Gtk::Button.new(:label => "Go")
     $buttonGo.signal_connect "clicked" do  |_widget| 
 #        $ipfinder.find("https://bing.com") 
-        $ipfinder.find($entryUrlInput.text) 
+        $ipfinder.find($entryUrlInput.text)
+        showPage($entryUrlInput.text)
     end
     grid.attach($buttonGo, 0, 1, 1, 1)
 
-
+    #page display
+    $entryContent = Gtk::TextView.new
+#    $entryContent.text = "Hello\none\ntwo\nthree"
+    $contentBuffer = Gtk::TextBuffer.new
+    $entryContent.set_buffer($contentBuffer)
     scrolledWindow = Gtk::ScrolledWindow.new()
     scrolledWindow.min_content_width = 1200
     scrolledWindow.min_content_height = 400
     scrolledWindow.vscrollbar_policy = Gtk::PolicyType::ALWAYS
 
-#    labelLinkedDomains = Gtk::Label.new
-#    labelLinkedDomains.label = "Linked domains"
-#    scrolledWindow.add(labelLinkedDomains)
+    scrolledWindow.add($entryContent)
+    grid.attach(scrolledWindow, 0, 2, 1, 1)
+
+
+
+    #links
+    scrolledWindow = Gtk::ScrolledWindow.new()
+    scrolledWindow.min_content_width = 1200
+    scrolledWindow.min_content_height = 400
+    scrolledWindow.vscrollbar_policy = Gtk::PolicyType::ALWAYS
+
     $tableDomains = Gtk::Table.new(1,1, false)
     label1 = Gtk::Label.new("levidsmith.com")
     $tableDomains.attach(label1, 0, 1, 0, 1, Gtk::AttachOptions::SHRINK, Gtk::AttachOptions::SHRINK, 0, 1)
@@ -42,14 +58,14 @@ def makeWindow()
 
     scrolledWindow.add($tableDomains)
 
-    grid.attach(scrolledWindow, 0, 2, 1, 1)
+    grid.attach(scrolledWindow, 0, 3, 1, 1)
 
     buttonShowDomains = Gtk::Button.new(:label => "Show Domains")
     buttonShowDomains.signal_connect "clicked" do  |_widget| 
         showDomains()
         #$ipfinder.printAllDomains()
     end
-    grid.attach(buttonShowDomains, 0, 3, 1, 1)
+    grid.attach(buttonShowDomains, 0, 4, 1, 1)
 
 
 
@@ -60,8 +76,19 @@ def makeWindow()
 
 end
 
+def showPage(strURL) 
+#    $contentBuffer.set_text(#{$ipfinder.getContent(strURL)})
+    strContent = $ipfinder.getContent(strURL)
+    strContent = strContent.force_encoding('utf-8')
+    puts strContent
+    $contentBuffer.set_text(strContent)
+
+
+end
+
 def showDomains()
 #    $ipfinder.printAllDomains()
+
 
     $tableDomains.children.each do | child |
         $tableDomains.remove(child)

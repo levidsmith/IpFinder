@@ -1,3 +1,5 @@
+#2022 Levi D. Smith - levidsmith.com 
+
 require 'net/http'
 require 'uri'
 require 'socket'
@@ -16,7 +18,7 @@ class IpFinder
   def find(strHost)
     strContent = Net::HTTP.get(URI.parse(strHost))
 
-    puts strContent
+#    puts strContent
 
 #    m = strContent.match(/<a.*href=\"(.*)\".*[^>]*>[^<]+<\/a>/)
 
@@ -46,6 +48,26 @@ class IpFinder
     end
 
  
+  end
+
+  def getContent(strHost)
+    #strContent = Net::HTTP.get(URI.parse(strHost))
+#    s = TCPSocket.new "levidsmith.com", 443
+#    strContent = ""
+#    while line = strConent.gets
+#      s += line
+#    end
+    uri = URI(strHost)
+    res = Net::HTTP.get_response(uri)
+    strContent = ""
+    strContent += "CODE: " + res.code + "\n"
+    strContent += "MESSAGE: " + res.message + "\n"
+    strContent += "CLASS.NAME" + res.class.name + "\n"
+    strContent += "BODY" + "\n"
+    strContent += res.body
+
+    return strContent
+
   end
 
   def printAllDomains()
